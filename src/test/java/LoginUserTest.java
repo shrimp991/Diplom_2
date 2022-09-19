@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class LoginUserTest {
-  private User user;
+
   private UserClient userClient;
   private String accessToken;
 
@@ -24,17 +24,16 @@ public class LoginUserTest {
   @DisplayName("Проверка, что пользователь может авторизоваться")
   @Description("Проверка POST-запроса для ручки /api/auth/login, должен вернуться код 200 и success: true")
   public void checkUserCanLogin() {
-    user = UserGenerator.getDefault();
     userClient
-        .create(user)
+        .create(User.getDefault())
         .statusCode(SC_OK);
     ValidatableResponse response =
         userClient
-        .login(UserCredentials.from(user))
-        .statusCode(SC_OK)
-        .and()
-        .assertThat()
-        .body("success", equalTo(TRUE));
+            .login(UserCredentials.from(User.getDefault()))
+            .statusCode(SC_OK)
+            .and()
+            .assertThat()
+            .body("success", equalTo(TRUE));
     accessToken = response.extract().path("accessToken");
     userClient.delete(accessToken);
   }
@@ -43,9 +42,8 @@ public class LoginUserTest {
   @DisplayName("Проверка, что несуществующий пользователь не может авторизоваться")
   @Description("Проверка POST-запроса для ручки /api/auth/login, должен вернуться код 401 и success: false")
   public void checkNonExistentUserCanNotLogin() {
-    user = UserGenerator.getNonExistent();
     userClient
-        .login(UserCredentials.from(user))
+        .login(UserCredentials.from(User.getNonExistent()))
         .statusCode(SC_UNAUTHORIZED)
         .and()
         .body("success", equalTo(FALSE));

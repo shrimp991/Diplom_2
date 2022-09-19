@@ -12,51 +12,50 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.apache.http.HttpStatus.*;
 
 public class CreateUserTest {
-    private User user;
-    private UserClient userClient;
-    private String accessToken;
 
-    @Before
-    @Step("Инициализация userClient")
-    public void initializationUserClient() {
-        userClient = new UserClient();
-    }
+  private UserClient userClient;
+  private String accessToken;
 
-    @After
-    @Step("Удаление тестового пользователя")
-    public void deleteUser() {
-        userClient.delete(accessToken);
-    }
+  @Before
+  @Step("Инициализация userClient")
+  public void initializationUserClient() {
+    userClient = new UserClient();
+  }
 
-    @Test
-    @DisplayName("Проверка создания пользователя")
-    @Description("Проверяется POST-запрос для ручки /api/auth/register, должен вернуть код 200 и success: true")
-    @Step("Создание дефолтного пользователя")
-    public void checkUserCanBeCreatedTest() {
-        user = UserGenerator.getDefault();
-        ValidatableResponse response = userClient
-            .create(user)
-            .statusCode(SC_OK)
-            .and()
-            .assertThat()
-            .body("success", equalTo(TRUE));
-        accessToken = response.extract().path("accessToken");
-    }
-    @Test
-    @DisplayName("Проверка создания дубля пользователя")
-    @Description("Проверяется POST-запрос для ручки /api/auth/register, должен вернуть код 403 и success: false")
-    @Step("Создание двух одинаковых пользователей")
-    public void checkDuplicateUserCanNotBeCreated() {
-        user = UserGenerator.getDefault();
-        ValidatableResponse response = userClient.create(user);
-        accessToken = response.extract().path( "accessToken");
-        userClient.create(user)
-            .statusCode(SC_FORBIDDEN)
-            .and()
-            .assertThat()
-            .body("success",
-                equalTo(FALSE),
-                "message",
-                equalTo("User already exists"));
-    }
+  @After
+  @Step("Удаление тестового пользователя")
+  public void deleteUser() {
+    userClient.delete(accessToken);
+  }
+
+  @Test
+  @DisplayName("Проверка создания пользователя")
+  @Description("Проверяется POST-запрос для ручки /api/auth/register, должен вернуть код 200 и success: true")
+  @Step("Создание дефолтного пользователя")
+  public void checkUserCanBeCreatedTest() {
+    ValidatableResponse response = userClient
+        .create(User.getDefault())
+        .statusCode(SC_OK)
+        .and()
+        .assertThat()
+        .body("success", equalTo(TRUE));
+    accessToken = response.extract().path("accessToken");
+  }
+
+  @Test
+  @DisplayName("Проверка создания дубля пользователя")
+  @Description("Проверяется POST-запрос для ручки /api/auth/register, должен вернуть код 403 и success: false")
+  @Step("Создание двух одинаковых пользователей")
+  public void checkDuplicateUserCanNotBeCreated() {
+    ValidatableResponse response = userClient.create(User.getDefault());
+    accessToken = response.extract().path("accessToken");
+    userClient.create(User.getDefault())
+        .statusCode(SC_FORBIDDEN)
+        .and()
+        .assertThat()
+        .body("success",
+            equalTo(FALSE),
+            "message",
+            equalTo("User already exists"));
+  }
 }

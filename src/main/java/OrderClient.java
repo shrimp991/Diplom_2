@@ -3,9 +3,10 @@ import static io.restassured.RestAssured.given;
 import io.restassured.response.ValidatableResponse;
 
 public class OrderClient extends RestClient {
+
   private static final String ORDER_PATH = "/api/orders";
 
-  public ValidatableResponse create (Order order) {
+  public ValidatableResponse create(Order order) {
     return given()
         .spec(getBaseSpec())
         .body(order)
@@ -13,7 +14,8 @@ public class OrderClient extends RestClient {
         .post(ORDER_PATH)
         .then();
   }
-  public ValidatableResponse create (Order order, String token) {
+
+  public ValidatableResponse create(Order order, String token) {
     return given()
         .spec(getBaseSpec())
         .header("Authorization", token)
@@ -22,6 +24,7 @@ public class OrderClient extends RestClient {
         .post(ORDER_PATH)
         .then();
   }
+
   public ValidatableResponse get(String token) {
     return given()
         .spec(getBaseSpec())
@@ -30,6 +33,7 @@ public class OrderClient extends RestClient {
         .get(ORDER_PATH)
         .then();
   }
+
   public ValidatableResponse get() {
     return given()
         .spec(getBaseSpec())

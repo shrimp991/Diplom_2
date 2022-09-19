@@ -10,25 +10,22 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.Test;
 
 public class GetOrderTest {
-  private User user;
+
   private UserClient userClient;
   private String accessToken;
-  private Order order;
   private OrderClient orderClient;
 
   @Test
   @DisplayName("Проверка, что для авторизованного пользователя вернется список заказов")
   @Description("Проверяется GET-запрос для ручки /api/orders, должен вернуться код 200 и success: true")
-  public void tryToGetOrderWithAuth(){
-    user = UserGenerator.getDefault();
+  public void GetOrderWithAuthTest() {
     userClient = new UserClient();
-    order = OrderGenerator.getDefault();
     orderClient = new OrderClient();
     ValidatableResponse response =
-        userClient.create(user)
+        userClient.create(User.getDefault())
             .statusCode(SC_OK);
     accessToken = response.extract().path("accessToken");
-    orderClient.create(order, accessToken)
+    orderClient.create(Order.getDefault(), accessToken)
         .statusCode(SC_OK);
     orderClient.get(accessToken)
         .statusCode(SC_OK)
@@ -40,7 +37,7 @@ public class GetOrderTest {
   @Test
   @DisplayName("Проверка, что для авторизованного пользователя вернется список заказов")
   @Description("Проверяется GET-запрос для ручки /api/orders, должен вернуться код 401 и success: false")
-  public void tryToGetOrderWithoutAuth(){
+  public void GetOrderWithoutAuthTest() {
     orderClient = new OrderClient();
     orderClient.get()
         .statusCode(SC_UNAUTHORIZED)
